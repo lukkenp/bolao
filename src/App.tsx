@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,7 @@ import SearchResults from "./pages/SearchResults";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Profile from "./pages/Profile";
+import Simulador from "./pages/Simulador";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +34,7 @@ const App = () => (
             <Route path="/boloes/:id" element={<AuthGuard><PoolDetail /></AuthGuard>} />
             <Route path="/pesquisar-resultados" element={<AuthGuard><SearchResults /></AuthGuard>} />
             <Route path="/perfil" element={<AuthGuard><Profile /></AuthGuard>} />
+            <Route path="/simulador" element={<AuthGuard><Simulador /></AuthGuard>} />
             
             <Route path="*" element={<NotFound />} />
           </Routes>
