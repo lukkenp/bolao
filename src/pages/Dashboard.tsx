@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import MainLayout from '@/layout/MainLayout';
@@ -212,8 +211,8 @@ export default function Dashboard() {
               {pools.slice(0, 3).map((pool) => (
                 <Link 
                   key={pool.id}
-                  to={`/boloes/${pool.id}`}
-                  className="bg-card border border-border rounded-lg p-6 hover:border-primary/20 hover:bg-muted/20 transition-colors"
+                  to={`/pool/${pool.id}`}
+                  className="bg-card border border-border rounded-lg p-6 transition-colors"
                 >
                   <h3 className="font-semibold text-lg mb-2">{pool.name}</h3>
                   <div className="flex justify-between text-sm text-muted-foreground mb-4">
@@ -259,7 +258,7 @@ export default function Dashboard() {
           
           {pools.length > 3 && (
             <div className="mt-4 text-center">
-              <Link to="/meus-boloes">
+              <Link to="/my-pools">
                 <Button variant="outline">Ver todos os bolões</Button>
               </Link>
             </div>

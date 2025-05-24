@@ -6,6 +6,13 @@ import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Slider } from './ui/slider'
 import { cn } from '@/lib/utils'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 // Preços oficiais da Mega Sena
 const PRECOS_MEGA_SENA = {
@@ -59,33 +66,27 @@ export function SimuladorBolao() {
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardContent className="p-6">
+    <Card>
+      <CardContent className="pt-6">
         <div className="space-y-6">
-          <h2 className="text-2xl font-bold text-center mb-6">
-            Simulador de Bolão
-          </h2>
-
           {/* Seleção de Dezenas */}
           <div className="space-y-2">
             <Label htmlFor="dezenas">Quantidade de Dezenas</Label>
-            <select
-              id="dezenas"
-              value={dezenas}
-              onChange={(e) => {
-                const value = Number(e.target.value)
-                if (value >= 6 && value <= 20) {
-                  setDezenas(value as DezenasType)
-                }
-              }}
-              className="w-full p-2 border rounded-md"
+            <Select
+              value={dezenas.toString()}
+              onValueChange={(value) => setDezenas(Number(value) as DezenasType)}
             >
-              {(Object.keys(PRECOS_MEGA_SENA) as unknown as DezenasType[]).map((num) => (
-                <option key={num} value={num}>
-                  {num} dezenas - {formatarMoeda(PRECOS_MEGA_SENA[num])}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecione a quantidade de dezenas" />
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.keys(PRECOS_MEGA_SENA) as unknown as DezenasType[]).map((num) => (
+                  <SelectItem key={num} value={num.toString()}>
+                    {num} dezenas - {formatarMoeda(PRECOS_MEGA_SENA[num])}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Quantidade de Jogos */}
@@ -117,13 +118,13 @@ export function SimuladorBolao() {
           {/* Resultados */}
           <div className="mt-8 space-y-4 p-4 bg-muted rounded-lg">
             <div className="flex justify-between items-center">
-              <span className="text-sm">Valor Base:</span>
-              <span className="font-semibold">{formatarMoeda(valorBase)}</span>
+              <span className="text-sm text-muted-foreground">Valor Base:</span>
+              <span className="font-medium">{formatarMoeda(valorBase)}</span>
             </div>
             
             <div className="flex justify-between items-center">
-              <span className="text-sm">Comissão ({taxaServico}%):</span>
-              <span className="font-semibold">{formatarMoeda(valorComissao)}</span>
+              <span className="text-sm text-muted-foreground">Comissão ({taxaServico}%):</span>
+              <span className="font-medium">{formatarMoeda(valorComissao)}</span>
             </div>
             
             <div className="flex justify-between items-center text-lg font-bold border-t pt-4">

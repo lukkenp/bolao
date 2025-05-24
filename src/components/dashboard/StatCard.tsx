@@ -1,28 +1,38 @@
-
 import { ReactNode } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { cn } from '@/lib/utils';
 
-type StatCardProps = {
+interface StatCardProps {
   title: string;
   value: string | number;
   description: string;
   icon: ReactNode;
-};
+  colorClass?: string;
+}
 
-export default function StatCard({ title, value, description, icon }: StatCardProps) {
+export default function StatCard({ 
+  title, 
+  value, 
+  description, 
+  icon,
+  colorClass 
+}: StatCardProps) {
   return (
-    <div className="bg-card rounded-lg border border-border shadow-sm p-6">
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-          <div className="mt-2 flex items-baseline">
-            <p className="text-2xl font-semibold text-card-foreground">{value}</p>
+    <Card>
+      <CardContent className="pt-6">
+        <div className="flex justify-between items-start">
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-muted-foreground">
+              {title}
+            </p>
+            <p className="text-2xl font-bold">{value}</p>
+            <p className="text-sm text-muted-foreground">
+              {description}
+            </p>
           </div>
-          <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+          <div className="p-2 rounded-lg">{icon}</div>
         </div>
-        <div className="p-2 bg-secondary/20 rounded-md">
-          {icon}
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

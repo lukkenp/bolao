@@ -1,17 +1,29 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { getMaxNumber, getRequiredNumbersCount } from '@/lib/lottery';
+import { getMaxNumber, getRequiredNumbersCount, getLotteryColor } from '@/lib/lottery';
 import { LotteryType } from '@/types';
+import { cn } from '@/lib/utils';
 
 type LotteryNumbersSelectorProps = {
   type: LotteryType;
   selectedNumbers: number[];
   onChange: (numbers: number[]) => void;
+  maxNumbers?: number; // Número máximo de números que podem ser selecionados
 };
 
-export function LotteryNumbersSelector({ type, selectedNumbers, onChange }: LotteryNumbersSelectorProps) {
+export function LotteryNumbersSelector({ 
+  type, 
+  selectedNumbers, 
+  onChange,
+  maxNumbers 
+}: LotteryNumbersSelectorProps) {
   const maxNumber = getMaxNumber(type);
-  const requiredCount = getRequiredNumbersCount(type);
+  const requiredCount = maxNumbers || getRequiredNumbersCount(type);
+  const baseColorClass = getLotteryColor(type);
+  const hoverColorClass = baseColorClass.replace('bg-', 'hover:bg-').replace('-600', '-500');
+  const borderColorClass = baseColorClass.replace('bg-', 'border-').replace('-600', '-500');
+  const textColorClass = baseColorClass.replace('bg-', 'text-').replace('-600', '-700');
+  const hoverTextColorClass = baseColorClass.replace('bg-', 'hover:text-').replace('-600', '-700');
   
   const toggleNumber = (number: number) => {
     if (selectedNumbers.includes(number)) {
@@ -51,17 +63,23 @@ export function LotteryNumbersSelector({ type, selectedNumbers, onChange }: Lott
           <Button
             key={number}
             type="button"
-            size="sm"
-            variant={selectedNumbers.includes(number) ? "default" : "outline"}
+            variant="ghost"
             onClick={() => toggleNumber(number)}
-            className="h-8 w-8 p-0"
+            className={cn(
+              "h-10 w-10 p-0 rounded-full transition-all duration-200 ease-in-out",
+              "border-2 text-sm font-bold",
+              `hover:scale-110 hover:${borderColorClass} ${hoverTextColorClass}`,
+              selectedNumbers.includes(number)
+                ? `${baseColorClass} text-white border-transparent shadow-lg scale-105`
+                : `border-gray-300 text-gray-700 hover:${baseColorClass.replace('bg-', 'bg-opacity-10')}`
+            )}
           >
             {number}
           </Button>
         ))}
       </div>
-      <div className="flex justify-between">
-        <div className="text-sm">
+      <div className="flex justify-between items-center">
+        <div className="text-sm font-medium text-muted-foreground">
           {selectedNumbers.length} de {requiredCount} números selecionados
         </div>
         <Button
@@ -69,6 +87,12 @@ export function LotteryNumbersSelector({ type, selectedNumbers, onChange }: Lott
           variant="outline"
           size="sm"
           onClick={generateNumbers}
+          className={cn(
+            textColorClass,
+            borderColorClass,
+            `hover:${baseColorClass.replace('bg-', 'bg-opacity-10')}`,
+            hoverTextColorClass
+          )}
         >
           Números aleatórios
         </Button>

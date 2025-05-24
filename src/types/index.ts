@@ -1,3 +1,4 @@
+import { Database } from './database.types';
 
 export type User = {
   id: string;
@@ -6,13 +7,7 @@ export type User = {
   role: 'admin' | 'participant';
 };
 
-export type LotteryType = 
-  'megasena' | 
-  'lotofacil' | 
-  'quina' | 
-  'lotomania' | 
-  'timemania' | 
-  'duplasena';
+export type LotteryType = 'megasena' | 'lotofacil' | 'quina' | 'lotomania' | 'timemania' | 'duplasena';
 
 export type PaymentStatus = 'confirmado' | 'pago' | 'pendente';
 
@@ -25,17 +20,18 @@ export type Pool = {
   maxParticipants: number;
   contributionAmount: number;
   adminId: string;
-  status: 'ativo' | 'finalizado';
+  status: string;
   createdAt: string;
 };
 
 export type Participant = {
   id: string;
-  userId: string;
+  userId: string | null;
   poolId: string;
   name: string;
   email: string;
-  status: PaymentStatus;
+  status: PaymentStatus | string;
+  createdAt: string;
 };
 
 export type Ticket = {
@@ -43,22 +39,39 @@ export type Ticket = {
   poolId: string;
   ticketNumber: string;
   numbers: number[];
+  createdAt: string;
+  lotteryType?: LotteryType;
 };
 
 export type LotteryResult = {
   id: string;
   lotteryType: LotteryType;
-  drawNumber: string;
+  drawNumber: number;
   drawDate: string;
   numbers: number[];
+  winners: number;
   accumulated: boolean;
-  winners?: number;
-  prizes?: Array<{
+  prizes: {
     hits: string;
     winners: number;
-    prize: string;
-  }>;
+    prize: number;
+  }[];
+  nextPrize: number;
+  timeCoracao?: string;
+  mesSorte?: string;
+  acumuladaProxConcurso?: number;
+  dataProxConcurso?: string;
+  proxConcurso?: number;
 };
+
+export interface TicketResult {
+  id: string;
+  ticketNumber: string;
+  numbers: number[];
+  matchedNumbers: number[];
+  hits: number;
+  prize: number;
+}
 
 export type Prize = {
   id: string;
@@ -105,3 +118,36 @@ export type SupabaseTicket = {
   numbers: number[];
   created_at: string;
 };
+
+export interface FavoriteTicket {
+  id: string;
+  ticketId: string;
+  ticketNumber: string;
+  numbers: number[];
+  lotteryType: LotteryType;
+  poolId: string;
+  drawDate: string;
+}
+
+export interface SupabaseFavoriteTicket {
+  id: string;
+  ticket_id: string;
+  tickets: {
+    id: string;
+    ticket_number: string;
+    numbers: number[];
+    pool: {
+      id: string;
+      lottery_type: string;
+    };
+  };
+}
+
+export interface MegaSenaResult extends LotteryResult {}
+export interface LotofacilResult extends LotteryResult {}
+export interface QuinaResult extends LotteryResult {}
+export interface LotomaniaResult extends LotteryResult {}
+export interface TimemaniaResult extends LotteryResult {
+  timeCoracao: string;
+}
+export interface DuplaSenaResult extends LotteryResult {}

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import MainLayout from '@/layout/MainLayout';
@@ -137,7 +136,7 @@ export default function MyPools() {
                   };
                   
                   return (
-                    <tr key={pool.id} className="border-b border-border hover:bg-muted/20">
+                    <tr key={pool.id} className="border-b border-border">
                       <td className="py-3 px-4">{pool.name}</td>
                       <td className="py-3 px-4">{lotteryNames[pool.lotteryType] || pool.lotteryType}</td>
                       <td className="py-3 px-4">{new Date(pool.drawDate).toLocaleDateString('pt-BR')}</td>
@@ -150,7 +149,7 @@ export default function MyPools() {
                       </td>
                       <td className="py-3 px-4 text-right">
                         <Link
-                          to={`/boloes/${pool.id}`}
+                          to={`/pool/${pool.id}`}
                           className="text-sm font-medium text-primary hover:underline"
                         >
                           Ver detalhes

@@ -1,4 +1,4 @@
-import { Pool, Participant, Ticket, SupabasePool, SupabaseParticipant, SupabaseTicket } from '@/types';
+import { Pool, Participant, Ticket, SupabasePool, SupabaseParticipant, SupabaseTicket, FavoriteTicket, SupabaseFavoriteTicket, LotteryType } from '@/types';
 
 /**
  * Converte um objeto SupabasePool para Pool
@@ -29,6 +29,7 @@ export const convertSupabaseParticipantToParticipant = (participant: SupabasePar
     name: participant.name,
     email: participant.email,
     status: participant.status,
+    createdAt: participant.created_at,
   };
 };
 
@@ -41,5 +42,19 @@ export const convertSupabaseTicketToTicket = (ticket: SupabaseTicket): Ticket =>
     poolId: ticket.pool_id,
     ticketNumber: ticket.ticket_number,
     numbers: ticket.numbers,
+    createdAt: ticket.created_at,
+  };
+};
+
+export const convertSupabaseFavoriteTicketToFavoriteTicket = (
+  supabaseTicket: SupabaseFavoriteTicket
+): FavoriteTicket => {
+  return {
+    id: supabaseTicket.id,
+    userId: supabaseTicket.user_id,
+    lotteryType: supabaseTicket.lottery_type as LotteryType,
+    numbers: supabaseTicket.numbers,
+    name: supabaseTicket.name || undefined,
+    createdAt: supabaseTicket.created_at,
   };
 }; 

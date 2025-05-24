@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu';
-import { LogOut, User, Calculator } from 'lucide-react';
+import { LogOut, User, Calculator, Star, Shuffle } from 'lucide-react';
 
 type SidebarLinkProps = {
   to: string;
@@ -34,90 +34,73 @@ const SidebarLink = ({ to, icon, label, active }: SidebarLinkProps) => {
 
 export default function Sidebar() {
   const location = useLocation();
-  const currentPath = location.pathname;
-  const { user, profile, signOut } = useAuth();
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
+  const { user, signOut } = useAuth();
 
   return (
-    <div className="w-60 bg-sidebar h-screen border-r border-border flex flex-col">
-      <div className="p-4 border-b border-border">
-        <Link to="/" className="flex items-center">
-          <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center text-primary-foreground mr-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-5 w-5"
-            >
-              <path d="M4.5 22h-2a.5.5 0 0 1-.5-.5v-19a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v19a.5.5 0 0 1-.5.5Z" />
-              <path d="M22 11.5v4a1.5 1.5 0 0 1-3 0v-4a1.5 1.5 0 0 1 3 0Z" />
-              <path d="M15 11.5v4a1.5 1.5 0 0 1-3 0v-4a1.5 1.5 0 0 1 3 0Z" />
-              <path d="M8 11.5v4a1.5 1.5 0 0 1-3 0v-4a1.5 1.5 0 0 1 3 0Z" />
-            </svg>
-          </div>
-          <h1 className="text-xl font-bold text-sidebar-foreground">SortePlay</h1>
-        </Link>
+    <aside className="w-64 bg-sidebar border-r border-border h-screen flex flex-col">
+      <div className="p-6">
+        <h2 className="text-lg font-semibold text-sidebar-foreground">Bolão Online</h2>
       </div>
 
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 px-3 space-y-1">
         <SidebarLink
           to="/dashboard"
-          icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><rect width="7" height="9" x="3" y="3" rx="1" /><rect width="7" height="5" x="14" y="3" rx="1" /><rect width="7" height="9" x="14" y="12" rx="1" /><rect width="7" height="5" x="3" y="16" rx="1" /></svg>}
+          icon={<span>📊</span>}
           label="Dashboard"
-          active={currentPath === '/dashboard'}
+          active={location.pathname === '/dashboard'}
         />
         <SidebarLink
-          to="/meus-boloes"
-          icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><path d="M4.5 22h-2a.5.5 0 0 1-.5-.5v-19a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v19a.5.5 0 0 1-.5.5Z" /><path d="M22 11.5v4a1.5 1.5 0 0 1-3 0v-4a1.5 1.5 0 0 1 3 0Z" /><path d="M15 11.5v4a1.5 1.5 0 0 1-3 0v-4a1.5 1.5 0 0 1 3 0Z" /><path d="M8 11.5v4a1.5 1.5 0 0 1-3 0v-4a1.5 1.5 0 0 1 3 0Z" /></svg>}
+          to="/my-pools"
+          icon={<span>🎲</span>}
           label="Meus Bolões"
-          active={currentPath === '/meus-boloes'}
-        />
-        <SidebarLink
-          to="/pesquisar-resultados"
-          icon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>}
-          label="Resultados"
-          active={currentPath === '/pesquisar-resultados'}
+          active={location.pathname === '/my-pools'}
         />
         <SidebarLink
           to="/simulador"
-          icon={<Calculator className="h-5 w-5" />}
+          icon={<Calculator className="h-4 w-4" />}
           label="Simulador"
-          active={currentPath === '/simulador'}
+          active={location.pathname === '/simulador'}
+        />
+        <SidebarLink
+          to="/gerador-jogos"
+          icon={<Shuffle className="h-4 w-4" />}
+          label="Gerador de Jogos"
+          active={location.pathname === '/gerador-jogos'}
+        />
+        <SidebarLink
+          to="/favoritos"
+          icon={<Star className="h-4 w-4" />}
+          label="Favoritos"
+          active={location.pathname === '/favoritos'}
         />
       </nav>
 
-      <div className="p-4 border-t border-border">
+      <div className="p-4 mt-auto border-t border-border">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center w-full px-4 py-3 text-sidebar-foreground hover:bg-sidebar-accent rounded-lg transition-colors">
-              <span className="mr-3">
-                <User className="h-5 w-5" />
-              </span>
-              <span className="flex-1 text-left">{profile?.name}</span>
+            <button className="flex items-center w-full px-3 py-2 text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent rounded-lg transition-colors">
+              <User className="mr-2 h-4 w-4" />
+              <span>{user?.email}</span>
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuItem asChild>
-              <Link to="/perfil" className="cursor-pointer">
+              <Link to="/profile" className="flex items-center">
                 <User className="mr-2 h-4 w-4" />
                 <span>Perfil</span>
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+            <DropdownMenuItem
+              onClick={signOut}
+              className="text-red-500 focus:text-red-500"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               <span>Sair</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
+    </aside>
   );
 }

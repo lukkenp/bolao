@@ -1,4 +1,6 @@
 import { LotteryType } from '@/types';
+import { supabase } from '@/integrations/supabase/client';
+import { randomId } from '@/lib/utils';
 
 /**
  * Retorna a quantidade de números que precisam ser escolhidos para cada tipo de loteria
@@ -23,7 +25,7 @@ export function getRequiredNumbersCount(lotteryType: LotteryType): number {
 }
 
 /**
- * Retorna o número máximo para cada tipo de loteria
+ * Retorna o número máximo que pode ser escolhido para cada tipo de loteria
  */
 export function getMaxNumber(lotteryType: LotteryType): number {
   switch (lotteryType) {
@@ -45,45 +47,7 @@ export function getMaxNumber(lotteryType: LotteryType): number {
 }
 
 /**
- * Gera um array de números default para cada tipo de loteria
- */
-export function generateDefaultNumbers(lotteryType: LotteryType): number[] {
-  // Por padrão, vamos apenas retornar um array vazio para o usuário preencher
-  return [];
-}
-
-/**
- * Verifica se a quantidade de números selecionados é válida para o tipo de loteria
- */
-export function isValidSelectionCount(count: number, lotteryType: LotteryType): boolean {
-  const required = getRequiredNumbersCount(lotteryType);
-  return count === required;
-}
-
-/**
- * Retorna uma cor para o tipo de loteria
- */
-export function getLotteryColor(lotteryType: LotteryType): string {
-  switch (lotteryType) {
-    case 'megasena':
-      return 'bg-green-600';
-    case 'lotofacil':
-      return 'bg-purple-600';
-    case 'quina':
-      return 'bg-blue-600';
-    case 'lotomania':
-      return 'bg-orange-600';
-    case 'timemania':
-      return 'bg-emerald-600';
-    case 'duplasena':
-      return 'bg-red-600';
-    default:
-      return 'bg-slate-600';
-  }
-}
-
-/**
- * Retorna o nome formatado do tipo de loteria
+ * Retorna o nome da loteria em português
  */
 export function getLotteryName(lotteryType: LotteryType): string {
   switch (lotteryType) {
@@ -100,6 +64,104 @@ export function getLotteryName(lotteryType: LotteryType): string {
     case 'duplasena':
       return 'Dupla Sena';
     default:
-      return lotteryType.charAt(0).toUpperCase() + lotteryType.slice(1);
+      return 'Loteria';
+  }
+}
+
+/**
+ * Retorna a cor da loteria em formato de classe do Tailwind
+ */
+export function getLotteryColor(lotteryType: LotteryType): string {
+  switch (lotteryType) {
+    case 'megasena':
+      return 'bg-emerald-600 hover:bg-emerald-700';
+    case 'lotofacil':
+      return 'bg-violet-600 hover:bg-violet-700';
+    case 'quina':
+      return 'bg-blue-600 hover:bg-blue-700';
+    case 'lotomania':
+      return 'bg-rose-600 hover:bg-rose-700';
+    case 'timemania':
+      return 'bg-amber-600 hover:bg-amber-700';
+    case 'duplasena':
+      return 'bg-pink-600 hover:bg-pink-700';
+    default:
+      return 'bg-primary hover:bg-primary/90';
+  }
+}
+
+/**
+ * Gera números aleatórios para um jogo
+ */
+export function generateRandomNumbers(lotteryType: LotteryType): number[] {
+  const maxNumber = getMaxNumber(lotteryType);
+  const requiredCount = getRequiredNumbersCount(lotteryType);
+  
+  const allNumbers = Array.from({ length: maxNumber }, (_, i) => i + 1);
+  let remaining = requiredCount;
+  const selected: number[] = [];
+  
+  while (remaining > 0 && allNumbers.length > 0) {
+    const randomIndex = Math.floor(Math.random() * allNumbers.length);
+    const randomNumber = allNumbers.splice(randomIndex, 1)[0];
+    selected.push(randomNumber);
+    remaining--;
+  }
+  
+  return selected.sort((a, b) => a - b);
+}
+
+/**
+ * Gera números padrão para um jogo (1, 2, 3, 4, 5, 6...)
+ */
+export function generateDefaultNumbers(lotteryType: LotteryType): number[] {
+  const requiredCount = getRequiredNumbersCount(lotteryType);
+  return Array.from({ length: requiredCount }, (_, i) => i + 1);
+}
+
+/**
+ * Verifica se a quantidade de números selecionados é válida para o tipo de loteria
+ */
+export function isValidSelectionCount(count: number, lotteryType: LotteryType): boolean {
+  const required = getRequiredNumbersCount(lotteryType);
+  return count === required;
+}
+
+/**
+ * Insere múltiplos bilhetes no banco de dados
+ */
+export async function insertMultipleTickets(
+  poolId: string,
+  tickets: number[][]
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const { data: pool, error: poolError } = await supabase
+      .from('pools')
+      .select('lottery_type')
+      .eq('id', poolId)
+      .single();
+
+    if (poolError) throw poolError;
+
+    const ticketsToInsert = tickets.map(numbers => ({
+      id: randomId(),
+      pool_id: poolId,
+      numbers,
+      ticket_number: randomId(8).toUpperCase(),
+    }));
+
+    const { error } = await supabase
+      .from('tickets')
+      .insert(ticketsToInsert);
+
+    if (error) throw error;
+
+    return { success: true };
+  } catch (error: any) {
+    console.error('Erro ao inserir bilhetes:', error);
+    return {
+      success: false,
+      error: error.message || 'Erro ao inserir bilhetes'
+    };
   }
 } 

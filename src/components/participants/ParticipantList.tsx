@@ -35,7 +35,7 @@ export default function ParticipantList({
           </thead>
           <tbody>
             {participants.map((participant) => (
-              <tr key={participant.id} className="border-b border-border hover:bg-muted/20">
+              <tr key={participant.id} className="border-b border-border hover:bg-muted/20 transition-colors">
                 <td className="px-4 py-3">{participant.name}</td>
                 <td className="px-4 py-3">{participant.email}</td>
                 <td className="px-4 py-3">
